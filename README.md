@@ -7,4 +7,4 @@ Screenshot:
 
 ![Screen Shot](https://image.ibb.co/cAg1yw/cooler_master_knight_rider_effect_app.jpg)
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/9AkpISbfezo?rel=0" frameborder="0" allowfullscreen></iframe>
+![Image](https://preview.ibb.co/iTQ5Qb/cooler_master_knight_rider_effect.jpg)
