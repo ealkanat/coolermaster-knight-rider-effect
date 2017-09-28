@@ -126,6 +126,7 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="knight-rider.ico" />
     <Content Include="SDKDLL.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
