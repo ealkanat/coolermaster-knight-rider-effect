@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -19,25 +20,11 @@ namespace CoolerMaster_SDK_Test
         private Timer timer;
         private static Color bgColor = Color.FromArgb(60, 0, 0);
         private static Color effectColor = Color.FromArgb(255, 0, 0);
-        private static int MAX_LED_ROW = 6;
-        private static int MAX_LED_COLUMN = 22;
         private static int CURRENT_LED_COLUMN = 0;
         private static DIRECTION currentDirection = DIRECTION.RIGHT;
         //private static List<KeyLed> activeKeyLeds;
         private static Dictionary<int, KeyLed> activeKeyLeds;
         private static int[] rows;
-
-        public struct KEY_COLOR
-        {
-            byte r;
-            byte g;
-            byte b;
-        }
-
-        public struct COLOR_MATRIX
-        {
-            KEY_COLOR[][] KeyColor;
-        }
 
         public KnightRider(Color color, Color background, int[] effectRows) {
             effectColor = color;
@@ -77,7 +64,7 @@ namespace CoolerMaster_SDK_Test
 
         private void init() {
 
-            int totalLedCount = MAX_LED_COLUMN * MAX_LED_ROW;
+            int totalLedCount = CoolerMasterDLL.MAX_LED_COLUMN * CoolerMasterDLL.MAX_LED_ROW;
 
             if (activeKeyLeds == null)
             {
@@ -86,7 +73,7 @@ namespace CoolerMaster_SDK_Test
                 {
                     int row = (int)Math.Ceiling((double)(i + 1) / 22);
                     int column = (i + 1);
-                    if (column > MAX_LED_COLUMN)
+                    if (column > CoolerMasterDLL.MAX_LED_COLUMN)
                     {
                         column = (i + 1) - (22 * (row - 1));
                     }
@@ -124,7 +111,7 @@ namespace CoolerMaster_SDK_Test
 
         private static void animateLeds(int[] rows, Color color) {
 
-            if (CURRENT_LED_COLUMN == MAX_LED_COLUMN - 1) {
+            if (CURRENT_LED_COLUMN == CoolerMasterDLL.MAX_LED_COLUMN - 1) {
                 currentDirection = DIRECTION.LEFT;
             }
 
