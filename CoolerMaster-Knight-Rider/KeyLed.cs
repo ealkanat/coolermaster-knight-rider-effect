@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace CoolerMaster_SDK_Test
+namespace CoolerMaster_Knight_Rider
 {
     class KeyLed
     {

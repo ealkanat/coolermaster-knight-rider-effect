@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace CoolerMaster_SDK_Test
+namespace CoolerMaster_Knight_Rider
 {
     static class Program
     {

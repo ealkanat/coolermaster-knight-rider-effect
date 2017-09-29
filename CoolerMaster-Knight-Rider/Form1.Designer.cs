@@ -1,4 +1,4 @@
-﻿namespace CoolerMaster_SDK_Test
+﻿namespace CoolerMaster_Knight_Rider
 {
     partial class MainForm
     {

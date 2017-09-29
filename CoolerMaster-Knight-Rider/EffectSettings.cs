@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CoolerMaster_SDK_Test
+namespace CoolerMaster_Knight_Rider
 {
     class EffectSettings
     {

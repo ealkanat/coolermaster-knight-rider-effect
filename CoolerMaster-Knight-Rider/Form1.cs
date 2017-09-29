@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace CoolerMaster_SDK_Test
+namespace CoolerMaster_Knight_Rider
 {
     public partial class MainForm : Form
     {
