@@ -1,24 +1,33 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
 namespace CoolerMaster_SDK_Test
 {
     public partial class MainForm : Form
     {
+        private const int SPI_GETSCREENSAVERRUNNING = 114;
         private static bool isActivateWhenWindowsLocked = false;
+        private static bool isScreenSaverRunning = false;
+        private static bool isWindowsLocked = false;
         private static EffectSettings settings;
         private static KnightRider knightRider;
         private static Color effectColor;
         private static Color bgColor;
         private static int[] rows;
 
+        private static Timer screenSaverCheck;
+
         public MainForm()
         {
             InitializeComponent();
 
             SystemEvents.SessionSwitch += new SessionSwitchEventHandler(SystemEvents_SessionSwitch);
+            screenSaverCheck = new Timer();
+            screenSaverCheck.Interval = 1000;
+            screenSaverCheck.Tick += new EventHandler(TimerEventProcessor);
 
             this.notifyIcon1.ShowBalloonTip(1500);
 
@@ -26,7 +35,7 @@ namespace CoolerMaster_SDK_Test
             rows = settings._effectRows;
             effectColor = Color.FromArgb(settings._color[0], settings._color[1], settings._color[2]);
             bgColor = Color.FromArgb(settings._backgroundColor[0], settings._backgroundColor[1], settings._backgroundColor[2]);
-            knightRider = new KnightRider(effectColor, bgColor, rows);
+            startEffect();
 
             button1.BackColor = effectColor;
             button2.BackColor = bgColor;
@@ -35,6 +44,26 @@ namespace CoolerMaster_SDK_Test
                 checkedListBox1.SetItemChecked(i - 1, true);
             }
 
+        }
+
+        private static void stopEffect() {
+            CoolerMasterDLL.EnableLedControl(false);
+            if (knightRider != null)
+            {
+                knightRider.stop();
+            }
+        }
+
+        private static void startEffect() {
+            CoolerMasterDLL.EnableLedControl(true);
+            if (knightRider != null)
+            {
+                knightRider.start();
+            }
+            else
+            {
+                knightRider = new KnightRider(effectColor, bgColor, rows);
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -64,7 +93,7 @@ namespace CoolerMaster_SDK_Test
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
-            CoolerMasterDLL.EnableLedControl(false);
+            stopEffect();
             knightRider = null;
         }
 
@@ -108,22 +137,42 @@ namespace CoolerMaster_SDK_Test
             {
                 if (e.Reason == SessionSwitchReason.SessionLock)
                 {
-                    CoolerMasterDLL.EnableLedControl(true);
-                    if (knightRider != null)
-                    {
-                        knightRider.start();
-                    }
-                    else
-                    {
-                        knightRider = new KnightRider(effectColor, bgColor, rows);
-                    }
+                    isWindowsLocked = true;
+                    startEffect();
                 }
                 else
                 {
-                    CoolerMasterDLL.EnableLedControl(false);
-                    if (knightRider != null)
-                    {
-                        knightRider.stop();
+                    isWindowsLocked = false;
+                    stopEffect();
+                }
+            }
+        }
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        private static extern bool SystemParametersInfo(
+        int uAction, int uParam, ref int lpvParam, int flags);
+
+        //there is a no event that is firing for screensaver running
+        // https://social.msdn.microsoft.com/Forums/en-US/d80d2ec6-c612-429e-a1e7-ec41b1d0d232/event-for-screensaver-activedeactive?forum=Vsexpressvcs
+
+        public static bool GetScreenSaverRunning()
+        {
+            int isRunning = 0;
+            SystemParametersInfo(SPI_GETSCREENSAVERRUNNING, 0, ref isRunning, 0);
+            return isRunning == 1;
+        }
+
+        private static void TimerEventProcessor(Object myObject, EventArgs myEventArgs)
+        {
+            isScreenSaverRunning = GetScreenSaverRunning();
+            if (isScreenSaverRunning)
+            {
+                if (isActivateWhenWindowsLocked) { startEffect(); }
+            }
+            else {
+                if (isActivateWhenWindowsLocked) {
+                    if (!isWindowsLocked) {
+                        stopEffect();
                     }
                 }
             }
@@ -134,22 +183,13 @@ namespace CoolerMaster_SDK_Test
             isActivateWhenWindowsLocked = (checkBox1.Checked);
             if (isActivateWhenWindowsLocked)
             {
-                CoolerMasterDLL.EnableLedControl(false);
-                if (knightRider != null)
-                {
-                    knightRider.stop();
-                }
+                screenSaverCheck.Start();
+                stopEffect();
             }
             else
             {
-                CoolerMasterDLL.EnableLedControl(true);
-                if (knightRider != null)
-                {
-                    knightRider.start();
-                }
-                else {
-                    knightRider = new KnightRider(effectColor, bgColor, rows);
-                }
+                screenSaverCheck.Stop();
+                startEffect();
             }
 
         }
