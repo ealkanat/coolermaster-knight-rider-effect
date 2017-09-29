@@ -55,7 +55,6 @@ namespace CoolerMaster_SDK_Test
         }
 
         private static void startEffect() {
-            CoolerMasterDLL.EnableLedControl(true);
             if (knightRider != null)
             {
                 knightRider.start();

@@ -104,8 +104,7 @@ namespace CoolerMaster_SDK_Test
             timer.Tick += new EventHandler(TimerEventProcessor);
             timer.Interval = 30;
             timer.Start();
-
-            Color c = Color.Red;
+            
             if (CoolerMasterDLL.IsDevicePlug())
             {
                 //MessageBox.Show("Connected");
